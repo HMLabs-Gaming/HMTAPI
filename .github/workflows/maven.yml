@@ -1,56 +1,27 @@
-name: Build & Release
+name: Maven CI
 
 on:
-  release:
-    types: [published]
+  push:
+  pull_request:
 
 permissions:
-  contents: write # required to upload the jar as a release asset
+  contents: read
 
 jobs:
-  release:
-    name: Build and attach jar
+  build:
+    name: Build and test
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
-        with:
-          # The published release, so the jar is built from the tagged commit rather
-          # than from whatever main happens to point at.
-          ref: ${{ github.event.release.tag_name }}
-
-      - name: Resolve version from tag
-        id: version
-        run: |
-          version="${GITHUB_REF_NAME#v}"
-          echo "version=${version}" >> "$GITHUB_OUTPUT"
-          echo "Building HMTAPI ${version}"
 
       - name: Set up JDK 25
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: '25'
+          java-version: "25"
           cache: maven
 
       - name: Build with Maven
-        run: mvn -B --batch-mode -Drevision=${{ steps.version.outputs.version }} clean verify
-
-      - name: Verify jar was built
-        run: |
-          jar="target/HMTAPI-${{ steps.version.outputs.version }}.jar"
-          if [ ! -f "$jar" ]; then
-            echo "Expected $jar, but it was not built. Found:" >&2
-            ls -1 target/*.jar >&2 || echo "  (no jars at all)" >&2
-            exit 1
-          fi
-          echo "Found $jar"
-
-      - name: Attach jar to release
-        uses: softprops/action-gh-release@v3
-        with:
-          files: target/HMTAPI-${{ steps.version.outputs.version }}.jar
-          fail_on_unmatched_files: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: mvn -B --batch-mode clean verify
