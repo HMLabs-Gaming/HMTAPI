@@ -1,5 +1,9 @@
 # HMTAPI
 
+[![Modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg)](https://modrinth.com/project/cWKSbCSq)
+[![Hangar](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/hangar_vector.svg)](https://hangar.papermc.io/HMLabs-Gaming/HMTAPI)
+[![GitHub](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/github_vector.svg)](https://github.com/TitanSMP/HMTAPI)
+
 RESTful HTTP API for Paper servers, configured through PlaceholderAPI placeholders.
 
 HMTAPI is a fork of [APIMachine](https://modrinth.com/project/9eIn1bYM), developed in cooperation
