@@ -1,0 +1,22 @@
+# Caller example: copy to the consuming plugin repository at .github/workflows/ci.yml.
+# Default CI example for a single Spigot plugin.
+name: Plugin CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: HMLabs-Gaming/release-workflows/.github/workflows/ci-java.yml@main
+    with:
+      java-version: "25"
+      build-command: |
+        set -Eeuo pipefail
+        mvn -B clean package -DskipTests -Pspigot
+      artifact-paths: |
+        target/*.jar
+      artifact-name: plugin-builds
