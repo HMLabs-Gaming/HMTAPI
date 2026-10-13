@@ -1,0 +1,47 @@
+# HMTAPI release workflow.
+# Builds one JAR, attaches versioned/versionless assets to GitHub Releases,
+# publishes the JAR to Modrinth for Paper and Purpur, and adds a Hangar external link for Paper.
+name: HMTAPI Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    uses: HMLabs-Gaming/release-workflows/.github/workflows/release-artifacts.yml@main
+    with:
+      project-slug: hmtapi
+      java-version: "25"
+      build-command: |
+        set -Eeuo pipefail
+        version="${GITHUB_REF_NAME#v}"
+        mkdir -p release-build
+
+        mvn -B --batch-mode -Drevision="${version}" clean verify
+
+        jar="target/HMTAPI-${version}.jar"
+        if [ ! -f "${jar}" ]; then
+          echo "Expected ${jar}, but it was not built. Found:" >&2
+          ls -1 target/*.jar >&2 || echo "  (no jars at all)" >&2
+          exit 1
+        fi
+
+        cp "${jar}" "release-build/HMTAPI-${version}.jar"
+
+      artifacts-json: '[{"path":"release-build/HMTAPI-{version}.jar"}]'
+
+      # Modrinth: publish this single JAR for both Paper and Purpur.
+      modrinth-project-id: cWKSbCSq
+      loaders: |
+        paper
+        purpur
+
+      # Hangar uses the GitHub Release asset as an external download link.
+      hangar-project-slug: HMTAPI
+      hangar-channel: Release
+      hangar-files: '[{"platforms":["PAPER"],"url":true,"externalUrl":"https://github.com/TitanSMP/HMTAPI/releases/download/{tag}/hmtapi-{version}.jar"}]'
+    secrets: inherit
