@@ -44,4 +44,6 @@ jobs:
       hangar-project-slug: HMTAPI
       hangar-channel: Release
       hangar-files: '[{"platforms":["PAPER"],"url":true,"externalUrl":"https://github.com/TitanSMP/HMTAPI/releases/download/{tag}/hmtapi-{version}.jar"}]'
-    secrets: inherit
+    secrets:
+      MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+      HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
